@@ -1,0 +1,12 @@
+.userContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 10px 0 10px;
+  .userDetails {
+    display: flex;
+    gap: 20px;
+    padding: 6px;
+    align-items: center;
+  }
+}
