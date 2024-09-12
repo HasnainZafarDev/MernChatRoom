@@ -91,18 +91,7 @@ getPrivateMessages = asyncHandler(async (req, res, next) => {
   try {
     const { recipientId } = req.params;
     const userId = req.user.id;
-    const messages = await Message.find({
-      $or: [
-        { isPrivate: true },
-        { recipient: recipientId },
-        { sender: userId },
-      ],
-      recipient: recipientId,
-      sender: userId,
-    })
-      .populate("sender", "username")
-      .populate("recipient", "username")
-      .sort({ createdAt: "asc" });
+    const messages = await Message.find({}).sort({ createdAt: "asc" });
 
     if (!messages.length) {
       throw new ApiError(
