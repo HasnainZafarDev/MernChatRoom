@@ -101,7 +101,8 @@ const logoutUser = asyncHandler(async (req, res, next) => {
     .json(new ApiResponse(200, null, "User Logged Out Successfully"));
 });
 const getAllUsers = asyncHandler(async (req, res, next) => {
-  const users = await User.find({});
+  const userId = req.user.id;
+  const users = await User.find({_id: { $ne: userId }});
   if (!users) {
     return res.status(404).json({ message: "No users found" });
   }

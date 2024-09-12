@@ -12,7 +12,8 @@ const router = express.Router();
 router.post("/register", createUser);
 router.post("/login", loginUser);
 router.post("/logout", verifyJWT, logoutUser);
-router.get("", getAllUsers);
+
+router.get("",verifyJWT, getAllUsers);
 router.get("/getuser", verifyJWT, getUser);
 
 module.exports = router;

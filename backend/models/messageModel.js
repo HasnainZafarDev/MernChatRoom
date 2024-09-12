@@ -10,7 +10,7 @@ const messageSchema = new mongoose.Schema(
     room: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Room",
-      required: true,
+      required: false,
     },
     recipient: {
       type: mongoose.Schema.Types.ObjectId,

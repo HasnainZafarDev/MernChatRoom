@@ -1,0 +1,14 @@
+{
+  "name": "mernchatroom",
+  "version": "1.0.0",
+  "description": "ChatRoom",
+  "main": "index.js",
+  "scripts": {
+    "install-backend": "cd backend && npm install",
+    "install-frontend": "cd frontend && npm install",
+    "add-packages": "npm run install-backend && npm run install-frontend"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

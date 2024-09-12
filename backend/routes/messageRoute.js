@@ -5,10 +5,16 @@ const {
   sendMessageInARoom,
   getRoomMessages,
   getPrivateMessages,
+  sendMessageToUser
 } = require("../controllers/messageController.js");
 
+
+//----- For room Chats
 router.post("/send", verifyJWT, sendMessageInARoom);
 router.get("/:roomId", verifyJWT, getRoomMessages);
-router.get("/private/:roomId/:recipientId", verifyJWT, getPrivateMessages);
+ 
+//----- For Individual Chats
+router.post("/sendtouser", verifyJWT, sendMessageToUser);
+router.get("/private/:recipientId", verifyJWT, getPrivateMessages);
 
 module.exports = router;

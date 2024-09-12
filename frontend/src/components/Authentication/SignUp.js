@@ -61,7 +61,7 @@ const SignUp = () => {
         position: "bottom",
       });
       localStorage.setItem("userInfo", JSON.stringify(data));
-      history.push("/chats");
+      history.push("/room");
     } catch (error) {
       toast({
         title: "Error Occured!",

@@ -12,6 +12,7 @@ import {
 
 import User from "../components/User/User";
 import AllRooms from "../components/Room/AllRooms";
+import UserChatsTab from "../components/User/UserChatsTab";
 
 const RoomPage = () => {
   return (
@@ -30,18 +31,21 @@ const RoomPage = () => {
           <User />
         </Text>
       </Box>
-      <Box bg="white" w="1500px" p={3} borderRadius="lg" borderWidth="1px">
+      <Box bg="gray.100" w="1500px" p={3} borderRadius="lg" borderWidth="1px">
         <Tabs isFitted variant="unstyled">
-          <TabList>
+          <TabList bg="green.500">
             <Tab _selected={{ color: "white", bg: "blue.500" }}>
               Available Rooms
             </Tab>
+            <Tab _selected={{ color: "white", bg: "blue.500" }}>Users</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
               <AllRooms />
             </TabPanel>
-            <TabPanel></TabPanel>
+            <TabPanel>
+              <UserChatsTab />
+            </TabPanel>
           </TabPanels>
         </Tabs>
       </Box>
