@@ -4,9 +4,16 @@
   "description": "ChatRoom",
   "main": "index.js",
   "scripts": {
-    "install-backend": "cd backend && npm install",
-    "install-frontend": "cd frontend && npm install",
-    "add-packages": "npm run install-backend && npm run install-frontend"
+    "install:all": "npm run install:backend && npm run install:frontend",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "start:all": "npm run start:backend && npm run start:frontend",
+    "start:backend": "cd backend && npm run dev",
+    "start:frontend": "cd frontend && npm start",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "eject": "react-scripts eject"
   },
   "keywords": [],
   "author": "",
