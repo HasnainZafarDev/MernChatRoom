@@ -1,6 +1,3 @@
 # MernChatRoom
-To run the project
-Backend = npm i and then type npm run dev
-Frontend = npm i and then type npm start
+Check Package.json file for script to install node moudles and start the frontend and backend server
 
-Will Proper Work when both frontend and backend apps are running
