@@ -52,13 +52,10 @@ const UserChatsPage = () => {
 
   useEffect(() => {
     if (selectedUser) {
-      console.log("🚀 ~ useEffect ~ selectedUser:", selectedUser._id)
       const fetchMessages = async () => {
         try {
           const { data } = await axios.get(`/api/messages/private/${selectedUser._id}`);
           setMessages(data.data);
-          console.log("🚀 ~ fetchMessages ~ data:", data)
-          console.log("🚀 ~ fetchMessages ~ messages:", messages)
         } catch (error) {
           console.error("Error fetching messages:", error.message);
           toast({
@@ -69,7 +66,6 @@ const UserChatsPage = () => {
           });
         }
       };
-
       fetchMessages();
     }
   }, [selectedUser]);
@@ -143,7 +139,7 @@ const UserChatsPage = () => {
             </Box>
 
             {/* Chat Content */}
-            <UserChats messages={messages} currentUser={currentUser} /> {/* Create this component */}
+            <UserChats messages={messages} currentUser={currentUser} /> 
 
             {/* Chat Input */}
             <FormControl mt={4} display="flex">

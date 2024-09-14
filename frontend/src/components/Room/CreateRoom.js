@@ -14,7 +14,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
-const CreateRoom = ({ isOpen, onClose, initialRef }, ref) => {
+const CreateRoom = ({ isOpen, onClose, initialRef }) => {
   const [name, setName] = useState("");
   const toast = useToast();
   const handleKeyDown = (e) => {

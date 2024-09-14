@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Text, Flex } from "@chakra-ui/react";
 
 const UserChats = ({ messages, currentUser }) => {
+  
   return (
     <Box flex="1" p={4} overflowY="auto" bg="gray.50">
       {messages.length == 0 ? (

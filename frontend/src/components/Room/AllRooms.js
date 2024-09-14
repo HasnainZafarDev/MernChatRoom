@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Flex,
@@ -21,56 +21,38 @@ import {
 import axios from "axios";
 import { MdCheckCircle } from "react-icons/md";
 import RoomChats from "./RoomChats";
+import CreateRoom from "./CreateRoom";
+import useCurrentUser from "../../Hooks/useCurrentUser";
+import useRooms from "../../Hooks/useRooms";
+import { joinRoom, leaveRoom, deleteRoom, fetchMessages, sendMessage,  } from "../../utils/apiService";
 
 const AllRooms = () => {
-  const [rooms, setRooms] = useState([]);
+  const currentUser = useCurrentUser();
+  const { rooms, setRooms } = useRooms();
   const [selectedRoom, setSelectedRoom] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isJoinModalOpen,onOpen: onJoinModalOpen,onClose: onJoinModalClose} = useDisclosure();
+  const {isOpen: isCreateModalOpen,onOpen: onCreateModalOpen,onClose: onCreateModalClose} = useDisclosure(); // For CreateRoom modal
+
+  const initialRef = useRef(); // Ref for input focus in CreateRoom modal
 
   const toast = useToast();
 
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const { data } = await axios.get("/api/user/getUser");
-        setCurrentUser(data.data);
-      } catch (error) {
-        console.error("Error fetching current user:", error);
-      }
-    };
-
-    fetchCurrentUser();
-  }, []);
-
-  useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const { data } = await axios.get("/api/room");
-        setRooms(data.data);
-      } catch (error) {
-        console.error("Error fetching rooms:", error);
-      }
-    };
-
-    fetchRooms();
-  }, []);
-
   const handleRoomClick = (room) => {
     setSelectedRoom(room);
-    fetchMessages(room._id);
+    handleFetchMessages(room._id);
   };
 
   const handleHeaderClick = () => {
-    onOpen();
+    onJoinModalOpen();
   };
 
   const handleJoinRoom = async () => {
     try {
-      await axios.post("/api/room/join", { roomId: selectedRoom._id });
+      await joinRoom(selectedRoom._id);
       setSelectedRoom((prevRoom) => ({
         ...prevRoom,
         participants: [...prevRoom.participants, currentUser],
@@ -82,26 +64,16 @@ const AllRooms = () => {
             : room
         )
       );
-      toast({
-        title: "You Joined The Room",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-      onClose();
+      onJoinModalClose()
+      toast({ title: "You Joined The Room", status: "success", duration: 5000 });
     } catch (error) {
-      toast({
-        title: "Error while joining the room",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast({ title: "Error while joining the room", status: "warning", duration: 5000 });
     }
   };
 
   const handleLeaveRoom = async () => {
     try {
-      await axios.post("/api/room/leave", { roomId: selectedRoom._id });
+      await leaveRoom(selectedRoom._id);
       setSelectedRoom((prevRoom) => ({
         ...prevRoom,
         participants: prevRoom.participants.filter(
@@ -120,62 +92,37 @@ const AllRooms = () => {
             : room
         )
       );
-
-      toast({
-        title: "You Left The Room",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
-      onClose();
+      onJoinModalClose()
+      toast({ title: "You Left The Room", status: "success", duration: 5000 });
     } catch (error) {
-      toast({
-        title: "Error While Leaving The Room",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
+      toast({ title: "Error While Leaving The Room", status: "warning", duration: 5000 });
     }
   };
 
   const handleDeleteRoom = async () => {
     try {
-      await axios.delete("/api/room", { data: { roomId: selectedRoom._id } });
-      toast({
-        title: "Room Deleted",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-      onClose();
+      await deleteRoom(selectedRoom._id);
+      toast({ title: "Room Deleted", status: "success", duration: 5000 });
+      onJoinModalClose()
+      setSelectedRoom(null)
+
     } catch (error) {
-      toast({
-        title: "You Are Not The Owner",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast({ title: "You Are Not The Owner", status: "warning", duration: 5000 });
     }
   };
+
 
   const isParticipant = selectedRoom?.participants.some(
     (p) => p._id === currentUser?._id
   );
 
-  const fetchMessages = async (roomId) => {
+  const handleFetchMessages = async (roomId) => {
     try {
-      const { data } = await axios.get(`/api/messages/${roomId}`);
-      setMessages(data.data); // Store messages in state
+      const fetchedMessages = await fetchMessages(roomId)
+      setMessages(fetchedMessages)
     } catch (error) {
-      console.error("Error fetching messages:", error);
-      toast({
-        title: "Error fetching messages",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-      });
+      console.log("🚀 ~ fetchMessages ~ error:", error)
+      
     }
   };
 
@@ -183,20 +130,11 @@ const AllRooms = () => {
     if (!newMessage.trim()) return;
 
     try {
-      const { data } = await axios.post("api/messages/send", {
-        roomId: selectedRoom._id,
-        content: newMessage,
-      });
-
-      setMessages((prevMessages) => [...prevMessages, data.data]);
+      const sentMessage = await sendMessage(selectedRoom._id, newMessage);
+      setMessages((prevMessages) => [...prevMessages, sentMessage]);
       setNewMessage("");
     } catch (error) {
-      toast({
-        title: "Message Not Sent",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast({ title: "Message Not Sent", status: "error", duration: 5000 });
     }
   };
   const handleKeyDown = (e) => {
@@ -229,6 +167,9 @@ const AllRooms = () => {
             </Text>
           </Box>
         ))}
+        <Button onClick={onCreateModalOpen} colorScheme="blue" w="387px">
+          Create Room
+        </Button>
       </Box>
 
       {/* Right Side (Selected Room Details) */}
@@ -293,7 +234,7 @@ const AllRooms = () => {
       </Box>
 
       {/* Join/Delete Room Modal */}
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isJoinModalOpen} onClose={onJoinModalClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{selectedRoom?.name}</ModalHeader>
@@ -321,6 +262,11 @@ const AllRooms = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <CreateRoom
+        isOpen={isCreateModalOpen}
+        onClose={onCreateModalClose}
+        initialRef={initialRef} // Pass the ref for input focus
+      />
     </Flex>
   );
 };

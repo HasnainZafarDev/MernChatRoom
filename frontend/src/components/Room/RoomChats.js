@@ -17,14 +17,13 @@ const RoomChats = ({ messages, currentUser }) => {
           const isCurrentUser =
             message.sender._id === currentUser._id ||
             message.sender === currentUser._id;
-
           return (
             <Box
               key={message._id}
               mb={4}
               display="flex"
               justifyContent={isCurrentUser ? "flex-end" : "flex-start"}
-            >
+              >
               <Box
                 bg={isCurrentUser ? "blue.500" : "gray.300"}
                 color={isCurrentUser ? "white" : "black"}
